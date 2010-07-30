@@ -3,7 +3,6 @@
 include ../config.mk
 -include ../config-local.mk
 
-DOCFILES = *.webdoc
 DOCDIR = $(LIBDIR)/webdoc/invenio/help/
 
 all:
@@ -13,7 +12,7 @@ test:
 	@echo "Nothing to test."
 
 install:
-	$(INSTALL) -m 664 $(DOCFILES) $(DOCDIR)
+	@echo "Done."
 
 clean:
 	@rm -f *.orig *~

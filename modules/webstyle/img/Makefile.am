@@ -45,6 +45,7 @@ img_DATA = add-small.png \
            cds.png \
            circle_green.png \
            circle_red.png \
+		   compare.png \
            cross_red.gif \
            delete-big.png \
            delete-small.png \
@@ -226,7 +227,10 @@ img_DATA = add-small.png \
            wb-unsubscribe.png \
            white_field.gif \
            wsignout.gif \
-	   compare.png
+		   dev-light-wide.png \
+		   inspire_logo.png \
+		   inspire_logo_beta.png \
+		   inspire_logo_beta_ugly.png 
 
 EXTRA_DIST = $(img_DATA)
 

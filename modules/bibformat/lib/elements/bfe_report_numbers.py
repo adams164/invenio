@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 ##
+## $Id$
+##
 ## This file is part of CDS Invenio.
-## Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 CERN.
+## Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 CERN.
 ##
 ## CDS Invenio is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -21,21 +23,18 @@
 
 __revision__ = ""
 
-def format(bfo, limit, separator=" ", extension=" etc."):
+def format(bfo, separator, limit, extension=" etc."):
     """
     Prints the report numbers of the record (037__a and 088__a)
 
-    @param separator: the separator between report numbers.
-    @param limit: the max number of report numbers to print
-    @param extension: a prefix printed when limit param is reached
+    @param separator the separator between report numbers.
+    @param limit the max number of report numbers to print
+    @param extension a prefix printed when limit param is reached
     """
 
     numbers = bfo.fields("037__a")
     numbers.extend(bfo.fields("088__a"))
-
-    if limit.isdigit():
-        limit_as_int = int(limit)
-        if limit_as_int <= len(numbers):
-            return separator.join(numbers[:limit_as_int]) + extension
-
-    return separator.join(numbers)
+    if limit.isdigit() and int(limit) <= len(numbers):
+        return separator.join(numbers[:limit]) + extension
+    else:
+        return separator.join(numbers)

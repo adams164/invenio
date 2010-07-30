@@ -24,7 +24,7 @@ import cgi
 from urllib import quote
 from invenio.config import CFG_SITE_URL
 
-def format(bfo, keyword_prefix, keyword_suffix, separator=' ; ', link='yes'):
+def format(bfo, keyword_prefix, keyword_suffix, separator=' | ', link='yes'):
     """
     Display keywords of the record.
 
@@ -34,22 +34,52 @@ def format(bfo, keyword_prefix, keyword_suffix, separator=' ; ', link='yes'):
     @param link: links the keywords if 'yes' (HTML links)
     """
 
-    keywords = bfo.fields('6531_a')
-
+    keywords = bfo.fields('695__a')
+    out = ""
     if len(keywords) > 0:
-        if link == 'yes':
-            keywords = ['<a href="' + CFG_SITE_URL + '/search?f=keyword&amp;p='+ \
-                        quote('"' + keyword + '"') + \
-                        '&amp;ln='+ bfo.lang+ \
-                        '">' + cgi.escape(keyword) + '</a>'
-                        for keyword in keywords]
-        else:
-            keywords = [cgi.escape(keyword)
-                        for keyword in keywords]
+        out += "<small>INSPIRE:</small> " + \
+               print_kw(bfo,
+                        keyword_prefix,
+                        keyword_suffix,
+                        separator, link, keywords)
+    keywords = bfo.fields('6531_a')
+    if len(keywords) > 0:
+        out += '<br /><small>Author supplied:</small> ' + \
+               print_kw(bfo,
+                        keyword_prefix,
+                        keyword_suffix,
+                        separator, link, keywords)
+    return out
 
-        keywords = [keyword_prefix + keyword + keyword_suffix
+def print_kw(bfo,
+             keyword_prefix,
+             keyword_suffix,
+             separator=' | ',
+             link='yes',
+             keywords=[]):
+    """
+    Print a list of words in keyword style
+
+    @param keyword_prefix a prefix before each keyword
+    @param keyword_suffix a suffix after each keyword
+    @param separator: a separator between keywords
+    @param link: links the keywords if 'yes' (HTML links)
+    @param keywords list of keywords to print
+    """
+
+    if link == 'yes':
+        keywords = ['<a href="' + CFG_SITE_URL + '/search?f=keyword&amp;p='+ \
+                    quote('"' + keyword + '"') + \
+                    '&amp;ln=' + bfo.lang + \
+                    '">' + cgi.escape(keyword) + '</a>'
                     for keyword in keywords]
-        return separator.join(keywords)
+    else:
+        keywords = [cgi.escape(keyword)
+                    for keyword in keywords]
+
+    keywords = [keyword_prefix + keyword + keyword_suffix
+                    for keyword in keywords]
+    return separator.join(keywords)
 
 def escape_values(bfo):
     """

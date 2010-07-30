@@ -24,6 +24,7 @@ pylib_DATA = webdoc.py \
              webpage.py \
              template.py \
              webstyle_templates.py \
+             webstyle_templates_inspire.py \
              webstyle_regression_tests.py \
              webinterface_handler.py \
              webinterface_tests.py \

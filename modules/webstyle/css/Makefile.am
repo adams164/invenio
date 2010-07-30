@@ -17,7 +17,7 @@
 
 webdir = $(localstatedir)/www/img
 
-web_DATA = invenio.css tablesorter.css jquery.ajaxPager.css
+web_DATA = invenio.css tablesorter.css jquery.ajaxPager.css invenio_inspire.css
 
 EXTRA_DIST = $(web_DATA)
 

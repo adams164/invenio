@@ -19,7 +19,7 @@ etcdir = $(sysconfdir)/bibedit/
 etc_DATA = MARC21slim.dtd refextract-journal-titles.kb refextract-report-numbers.kb
 
 rectmpldir = $(etcdir)/record_templates/
-rectmpl_DATA = poem.xml
+rectmpl_DATA = poem.xml desy_preprint_old.xml hepold_conference.xml
 
 fldtmpldir = $(etcdir)/field_templates/
 fldtmpl_DATA = firstauthor.xml

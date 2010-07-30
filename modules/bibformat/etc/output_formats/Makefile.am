@@ -21,7 +21,8 @@ etc_DATA = HB.bfo HC.bfo HD.bfo HP.bfo HX.bfo XM.bfo EXCEL.bfo \
 	   XD.bfo HS.bfo \
 	   XE.bfo XN.bfo XR.bfo XW.bfo \
 	   XOAIDC.bfo XO.bfo \
-	   HDREF.bfo HDFILE.bfo HDACT.bfo
+	   HDREF.bfo HDFILE.bfo HDACT.bfo \
+	   HLXE.bfo HLXU.bfo
 
 tmpdir = $(prefix)/var/tmp
 

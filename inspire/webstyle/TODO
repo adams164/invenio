@@ -1,0 +1,4 @@
+The make target 'make uglify' should be made to do something; the normal beta
+and beta ugly CSS and images are installed as part of inspire, so could this 
+be as simple as a text substitution across webstyle_templates_inspire.py?
+Perhaps.  But the procedure should be trivially reversible as well.

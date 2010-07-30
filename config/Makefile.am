@@ -19,8 +19,8 @@ noinst_SCRIPTS = invenio-autotools.conf
 
 confdir = $(sysconfdir)
 
-conf_DATA = invenio.conf invenio-autotools.conf
+conf_DATA = invenio.conf invenio-autotools.conf invenio-local.conf-example
 
-EXTRA_DIST = invenio.conf invenio-autotools.conf.in
+EXTRA_DIST = invenio.conf invenio-autotools.conf.in invenio-local.conf-example
 
 CLEANFILES = *~ *.tmp

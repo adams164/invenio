@@ -105,30 +105,18 @@
       <hu>Teljes útmutató a <CFG_SITE_NAME_INTL> weboldalán való kereséshez.</hu>
     </lang>
 </dd>
-<dt><a href="submit-guide<lang:link/>">_(Submit Guide)_</a></dt>
+<dt><a href="search-guide<lang:link/>">_(Additions)_</a>
+</dt>
 <dd><lang>
-      <en>Get help with submitting to <CFG_SITE_NAME_INTL>.</en>
-      <fr>Obtenez de l'aide avec la soumission dans <CFG_SITE_NAME_INTL>.</fr>
-      <de>Hier können Sie die Eintragehilfe für den <CFG_SITE_NAME_INTL> konsultieren.</de>
-      <es>Get help with submitting to <CFG_SITE_NAME_INTL>.</es>
-      <ca>Ajuda per la tramesa de documents a <CFG_SITE_NAME_INTL>.</ca>
-      <pl>Get help with submitting to <CFG_SITE_NAME_INTL>.</pl>
-      <pt>Obtenha ajuda em submissões ao <CFG_SITE_NAME_INTL>.</pt>
-      <it>Aiuto per la sottomissione di documenti ad <CFG_SITE_NAME_INTL>.</it>
-      <ru>Get help with submitting to <CFG_SITE_NAME_INTL>.</ru>
-      <sk>Pomoc pre pridávanie do <CFG_SITE_NAME_INTL>.</sk>
-      <cs>Nápověda pro přidávaní do <CFG_SITE_NAME_INTL>.</cs>
-      <no>Få hjelp til innsending til <CFG_SITE_NAME_INTL>.</no>
-      <sv>För hjälp med publicering i <CFG_SITE_NAME_INTL>.</sv>
-      <el>Πληροφορίες σχετικά με τις υποβολές σας στο <CFG_SITE_NAME_INTL>.</el>
-      <uk>Get help with submitting to <CFG_SITE_NAME_INTL>.</uk>
-      <ja>Get help with submitting to <CFG_SITE_NAME_INTL>.</ja>
-      <bg>Get help with submitting to <CFG_SITE_NAME_INTL>.</bg>
-      <hr>Get help with submitting to <CFG_SITE_NAME_INTL>.</hr>
-      <zh_CN>Get help with submitting to <CFG_SITE_NAME_INTL>.</zh_CN>
-      <zh_TW>Get help with submitting to <CFG_SITE_NAME_INTL>.</zh_TW>
-      <hu>Segítség a saját anyagainak feltöltéséhez a <CFG_SITE_NAME_INTL> weboldalára.</hu>
+      <en>How to request that we add documents to <CFG_SITE_NAME_INTL>.</en>
     </lang>
 </dd>
+<dt><a href="corrections<lang:link/>">_(Corrections)_</a>
+</dt>
+<dd><lang>
+      <en>Information on how to correct data in <CFG_SITE_NAME_INTL>.</en>
+    </lang>
+</dd>
+
 </dl>
 </blockquote>

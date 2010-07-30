@@ -3,7 +3,6 @@
 include ../config.mk
 -include ../config-local.mk
 
-IMGFILES = *.png invenio_inspire.css
 LIBFILES = webstyle_templates_inspire.py
 
 all:
@@ -13,10 +12,9 @@ test:
 	@echo "Nothing to test."
 
 install:
-	$(INSTALL) -m 664 $(IMGFILES) $(WEBDIR)/img
-	$(INSTALL) -m 664 $(LIBFILES) $(LIBDIR)/python/invenio
+	@echo "Done."
 
-install-ugly: install uglify
+install-ugly: uglify
 
 uglify:
 	@cat invenio_inspire_ugly.css >>$(WEBDIR)/img/invenio_inspire.css

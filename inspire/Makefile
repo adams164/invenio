@@ -3,7 +3,7 @@ include config.mk
 #
 # Note that local makefile configurations can be defined in config-local.mk to override config.mk
 
-SUBDIRS = bibconvert bibformat webstyle bibrank conf editor webhelp
+SUBDIRS = bibconvert bibrank conf editor webhelp webstyle
 
 all:
 	$(foreach SUBDIR, $(SUBDIRS), cd $(SUBDIR) && make all && cd .. ;)
@@ -14,9 +14,8 @@ test:
 	@echo "Done.  Please run make install now."
 
 install:
-	@echo "Installing new code and support files..."
-	$(foreach SUBDIR, $(SUBDIRS), cd $(SUBDIR) && make install && cd .. ;)
-	@echo "Done.  You may want to copy $(ETCDIR)/invenio-local.conf-example to $(ETCDIR)/invenio-local.conf, edit commented parts, run inveniocfg --update-all --reset-all and restart Apache now."
+	@echo "This target does nothing since the merge into the invenio tree."
+	@echo "You may want to copy $(ETCDIR)/invenio-local.conf-example to $(ETCDIR)/invenio-local.conf, edit commented parts, run inveniocfg --update-all --reset-all and restart Apache now."
 	@echo "To install database changes, run 'make install-dbchanges'."
 
 install-dbchanges: reset-inspire-field-configuration \
@@ -31,11 +30,11 @@ install-dbchanges: reset-inspire-field-configuration \
 	@cd kbs && make install-dbchanges && cd ..
 	@echo "Done."
 
-reset-ugly-ui:
-	@cd webstyle && make install-ugly && cd ..
-
-reset-normal-ui:
-	@cd webstyle && make install && cd ..
+#reset-ugly-ui:
+#	@cd webstyle && make install-ugly && cd ..
+#
+#reset-normal-ui:
+#	@cd webstyle && make install && cd ..
 
 clean:
 	$(foreach SUBDIR, $(SUBDIRS), cd $(SUBDIR) && make clean && cd .. ;)
