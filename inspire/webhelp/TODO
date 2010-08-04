@@ -1,0 +1,5 @@
+These .html files don't get stored on disk; they get stored in the database.
+
+We need to remember to store them someplace appropriate in the rest of the
+tree and then get them written into the database when everything else is being
+set up.

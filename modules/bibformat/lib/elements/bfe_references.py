@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 ##
+## $Id$
+##
 ## This file is part of CDS Invenio.
 ## Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 CERN.
 ##
@@ -27,17 +29,10 @@ def format(bfo, reference_prefix, reference_suffix):
     @param reference_prefix a prefix displayed before each reference
     @param reference_suffix a suffix displayed after each reference
     """
-    from invenio.config import CFG_SITE_URL, CFG_ADS_SITE
-    from invenio.search_engine import get_mysql_recid_from_aleph_sysno, \
-         print_record
 
-    if CFG_ADS_SITE:
-        ## FIXME: store external sysno into 999 $e, not into 999 $r
-        # do not escape field values for now because of things like A&A in
-        # 999 $r that are going to be resolved further down:
-        references = bfo.fields("999C5", escape=0)
-    else:
-        references = bfo.fields("999C5", escape=1)
+    from invenio.search_engine import search_unit
+    from invenio.bibformat import format_record
+    references = bfo.fields("999C5", escape=1)
     out = ""
 
     for reference in references:
@@ -46,40 +41,62 @@ def format(bfo, reference_prefix, reference_suffix):
         if reference.has_key('o'):
             if out != "":
                 ref_out = '</li>'
-            ref_out += "<li><small>"+ reference['o']+ "</small> "
+            ref_out += '<li><small>'+\
+                       reference['o']+ "</small> "
+#  LEAVE out full ref while we have spires import which does not store
+#  useful things here
+#        if reference.has_key('m'):
+#            ref_out += "<small>"+ reference['m']+ "</small> "
 
-        if reference.has_key('m'):
-            ref_out += "<small>"+ reference['m']+ "</small> "
 
+
+        display_journal = ''
+        display_report = ''
+        clean_report = ''
+        clean_journal = ''
+        hits = []
+        if reference.has_key('s'):
+            display_journal = reference['s']
+            clean_journal = reference['s']
         if reference.has_key('r'):
-            if CFG_ADS_SITE:
-                # 999 $r contains external sysno to be resolved:
-                recid_to_display = get_mysql_recid_from_aleph_sysno(reference['r'])
-                if recid_to_display:
-                    ref_out += print_record(recid_to_display, 'hs')
-                else:
-                    ref_out += '<small>' + reference['r'] + ' (not in ADS)</small>'
-            else:
-                ref_out += '<small> [<a href="'+CFG_SITE_URL+'/search?f=reportnumber&amp;p='+ \
-                       reference['r']+ \
-                       '&amp;ln=' + bfo.lang + \
-                       '">'+ reference['r']+ "</a>] </small> <br />"
+            display_report = reference['r']
+            clean_report = reference['r']
+        if clean_report:
+            hits = search_unit(f='reportnumber', p=clean_report)
+        if clean_journal and len(hits)!=1:
+            hits = search_unit(f='journal', p=clean_journal)
+        if len(hits) == 1:
+            ref_out += '<small>' +\
+                       format_record(list(hits)[0],'hs') + '</small>'
 
-        if reference.has_key('t'):
-            ejournal = bfo.kb("ejournals", reference.get('t', ""))
-            if ejournal != "":
-                ref_out += ' <small> <a href="http://weblib.cern.ch/cgi-bin/ejournals?publication='\
-                      + reference['t'].replace(" ", "+") \
-                +"&amp;volume="+reference.get('v', "")+"&amp;year="+\
-                reference.get('y', "")+"&amp;page="+\
-                reference.get('p',"").split("-")[0]+'">'
-                ref_out += reference['t']+": "+reference.get('v', "")+\
-                       " ("+reference.get('y', "")+") "
-                ref_out += reference.get('p', "")+"</a> </small> <br />"
-            else:
-                ref_out += " <small> "+reference['t']+ reference.get('v', "")+\
-                       reference.get('y',"")+ reference.get('p',"")+ \
-                       " </small> <br />"
+#  Silly stuff that can be used if there are a lot of multiple hits
+#
+#        elif len(hits)>1:
+#            if display_journal:
+#                ref_out += '<small><a href="'+CFG_SITE_URL+\
+#                           '/search?f=journal&amp;p='+ \
+#                           reference['s']+ \
+#                           '&amp;ln=' + bfo.lang + \
+#                           '">'+display_journal+"</a></small>"
+#            if display_report:
+#                ref_out += ' <small><a href="'+CFG_SITE_URL+\
+#                           '/search?f=reportnumber&amp;p='+ \
+#                           reference['r']+ \
+#                           '&amp;ln=' + bfo.lang + \
+#                           '">'+display_report+"</a></small>"
+
+        else:
+            ref_out = '<small>'
+            if display_journal:
+                ref_out += display_journal
+            if display_report:
+                ref_out += ' '+display_report
+            ref_out += ' (not in Inspire)</small>'
+
+
+
+        ref_out += "<br />"
+
 
 
         if reference_prefix is not None and ref_out != '':

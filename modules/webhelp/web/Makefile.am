@@ -20,7 +20,7 @@ SUBDIRS = admin hacking
 webdoclibdir = $(libdir)/webdoc/invenio/help
 
 webdoclib_DATA = \
-	help-central.webdoc
+	help-central.webdoc additions.webdoc corrections.webdoc
 
 EXTRA_DIST = $(webdoclib_DATA)
 

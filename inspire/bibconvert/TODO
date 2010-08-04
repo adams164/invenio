@@ -1,0 +1,5 @@
+Sort out what these other files are and what to do with them.
+
+Rewrite the Makefile targets to refer to the correct path for SPIRES2MARC.xsl
+and to not be Makefile targets.  Perhaps a shell script or python script for
+small document set testing.

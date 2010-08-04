@@ -29,7 +29,14 @@ pylib_DATA = bfe_field.py bfe_title.py bfe_authors.py bfe_abstract.py bfe_affili
 	     bfe_client_info.py bfe_language.py bfe_record_id.py bfe_comments.py \
 	     bfe_pagination.py bfe_fulltext_mini.py bfe_year.py bfe_isbn.py \
 	     bfe_appears_in_collections.py bfe_photos.py bfe_record_stats.py \
-	     bfe_edit_files.py
+		 bfe_edit_files.py bfe_CERN_fulltext.py \
+		 bfe_CERN_imprint.py bfe_CERN_indis.py bfe_CERN_series.py \
+		 bfe_CERN_standard_number.py bfe_CERN_talk_link.py \
+		 bfe_CERN_title_brief.py bfe_filter_field.py bfe_INSPIRE_arxiv.py \
+		 bfe_INSPIRE_authors.py bfe_INSPIRE_cited_by.py \
+		 bfe_INSPIRE_conference.py bfe_INSPIRE_date.py bfe_INSPIRE_imprint.py \
+		 bfe_INSPIRE_links.py bfe_INSPIRE_publi_info.py bfe_INSPIRE_report.py \
+		 bfe_INSPIRE_tests.py bfe_INSPIRE_title.py
 
 tmpdir = $(prefix)/var/tmp/tests_bibformat_elements
 

@@ -1,0 +1,338 @@
+<records>
+<goal_record>
+ <irn>4228162</irn>
+ <doc-type>Preprint</doc-type>
+ <report-num>ANL-HEP-PR-99-123</report-num>
+ <astr>
+  <astr1>
+   <author>Wall, D.</author>
+  </astr1>
+  <astr1>
+   <author>Allison, W.W.M.</author>
+  </astr1>
+  <astr1>
+   <author>Alner, G.J.</author>
+  </astr1>
+  <astr1>
+   <author>Ayres, D.S.</author>
+  </astr1>
+  <astr1>
+   <author>Barrett, W.L.</author>
+  </astr1>
+  <astr1>
+   <author>Bode, C.</author>
+  </astr1>
+  <astr1>
+   <author>Border, P.M.</author>
+  </astr1>
+  <astr1>
+   <author>Brooks, C.B.</author>
+  </astr1>
+  <astr1>
+   <author>Cobb, J.H.</author>
+  </astr1>
+  <astr1>
+   <author>Cotton, R.</author>
+  </astr1>
+  <astr1>
+   <author>Courant, H.</author>
+  </astr1>
+  <astr1>
+   <author>Demuth, D.M.</author>
+  </astr1>
+  <astr1>
+   <author>Fields, T.H.</author>
+  </astr1>
+  <astr1>
+   <author>Gallagher, H.R.</author>
+  </astr1>
+  <astr1>
+   <author>Garcia-Garcia, C.</author>
+  </astr1>
+  <astr1>
+   <author>Goodman, M.C.</author>
+  </astr1>
+  <astr1>
+   <author>Gran, R.</author>
+  </astr1>
+  <astr1>
+   <author>Joffe-Minor, T.</author>
+  </astr1>
+  <astr1>
+   <author>Kafka, T.</author>
+  </astr1>
+  <astr1>
+   <author>Kasahara, S.M.S.</author>
+  </astr1>
+  <astr1>
+   <author>Leeson, W.</author>
+  </astr1>
+  <astr1>
+   <author>Litchfield, P.J.</author>
+  </astr1>
+  <astr1>
+   <author>Longley, N.P.</author>
+  </astr1>
+  <astr1>
+   <author>Mann, W.A.</author>
+  </astr1>
+  <astr1>
+   <author>Marshak, M.L.</author>
+  </astr1>
+  <astr1>
+   <author>Milburn, Richard H.</author>
+  </astr1>
+  <astr1>
+   <author>Miller, W.H.</author>
+  </astr1>
+  <astr1>
+   <author>Mualem, L.</author>
+  </astr1>
+  <astr1>
+   <author>Napier, A.</author>
+  </astr1>
+  <astr1>
+   <author>Oliver, W.P.</author>
+  </astr1>
+  <astr1>
+   <author>Pearce, G.F.</author>
+  </astr1>
+  <astr1>
+   <author>Peterson, E.A.</author>
+  </astr1>
+  <astr1>
+   <author>Petyt, D.A.</author>
+  </astr1>
+  <astr1>
+   <author>Price, L.E.</author>
+  </astr1>
+  <astr1>
+   <author>Ruddick, K.</author>
+  </astr1>
+  <astr1>
+   <author>Sanchez, Mayly C.</author>
+  </astr1>
+  <astr1>
+   <author>Schneps, J.</author>
+  </astr1>
+  <astr1>
+   <author>Schub, M.H.</author>
+  </astr1>
+  <astr1>
+   <author>Seidlein, R.</author>
+  </astr1>
+  <astr1>
+   <author>Stassinakis, A.</author>
+  </astr1>
+  <astr1>
+   <author>Tom, H.</author>
+  </astr1>
+  <astr1>
+   <author>Thron, J.L.</author>
+  </astr1>
+  <astr1>
+   <author>Villaume, G.</author>
+  </astr1>
+  <astr1>
+   <author>Wakely, S.P.</author>
+  </astr1>
+  <astr1>
+   <author>West, N.</author>
+  </astr1>
+  <affiliation type="RECAFF" key="256"> Argonne</affiliation>
+  <affiliation type="RECAFF" key="4162"> Minnesota U.</affiliation>
+  <affiliation type="RECAFF" key="5240"> Oxford U.</affiliation>
+  <affiliation type="RECAFF" key="5932"> Rutherford</affiliation>
+  <affiliation type="RECAFF" key="7226"> Tufts U.</affiliation>
+  <affiliation type="RECAFF" key="11177"> Western Washington U.</affiliation>
+ </astr>
+<abstract><abstract-text>
+ A search for nucleon decay into two-body final states containing K^0 mesons
+ has been conducted using the 963 metric ton Soudan 2 iron tracking calorimeter.
+ The topologies, ionizations, and kinematics of contained events recorded in a
+ 5.52 kiloton-year total exposure (4.41 kton-year fiducial volume exposure) are
+ examined for compatibility with nucleon decays in an iron medium. For proton
+ decay into the fully visible final states \mu^+K^0_s and e^+K^0_s, zero and one
+ event candidates are observed respectively. The lifetime lower limits (\tau /B)
+ thus implied are 1.5 \times 10^{32} years and 1.2 \times 10^{32} years,
+ respectively. Lifetime lower limits are also reported for proton decay into
+ l^+K^0_l, and for neutron decay into \nu K^0_s.
+</abstract-text>
+</abstract>
+ <col-note>Soudan 2 Collaboration</col-note>
+ <title>Search for nucleon decay into lepton + K0 final states using Soudan-2</title>
+ <pub-note>Phys.Rev.D61:072004,2000</pub-note>
+ <jour-info><jname>Phys.Rev.</jname><jvol>D61</jvol><jpage>072004</jpage><jyear>2000</jyear></jour-info>
+ <date>1999-10</date>
+ <jour-sub>Phys.Rev.D</jour-sub>
+ <ppf-subject>Experimental, S</ppf-subject>
+ <p>37</p>
+ <ppa>0017</ppa>
+ <ppf>9942</ppf>
+ <citation><fullref>PPNPD,12,1</fullref><jref>Prog.Part.Nucl.Phys.,12,1</jref></citation>
+ <citation><fullref>RNCIB,8,1</fullref><jref>Riv.Nuovo Cim.,8,1</jref></citation>
+ <citation><fullref>RPPHA,58,819</fullref><jref>Rept.Prog.Phys.,58,819</jref></citation>
+ <citation><fullref>PHRVA,D38,1479</fullref><jref>Phys.Rev.,D38,1479</jref></citation>
+ <citation><fullref>hep-ph/9207279  NUPHA,B402,46</fullref><jref>Nucl.Phys.,B402,46</jref><aref>hep-ph/9207279</aref></citation>
+ <citation><fullref>hep-ph/9610293  PHRVA,D55,6986</fullref><jref>Phys.Rev.,D55,6986</jref><aref>hep-ph/9610293</aref></citation>
+ <citation><fullref>hep-ph/9512399  PHRVA,D53,6282</fullref><jref>Phys.Rev.,D53,6282</jref><aref>hep-ph/9512399</aref></citation>
+ <citation><fullref>hep-ph/9506261  PHLTA,B381,137</fullref><jref>Phys.Lett.,B381,137</jref><aref>hep-ph/9506261</aref></citation>
+ <citation><fullref>hep-ph/9802334  PHRVA,D58,035003</fullref><jref>Phys.Rev.,D58,035003</jref><aref>hep-ph/9802334</aref></citation>
+ <citation><fullref>hep-ph/9712307  PHLTA,B423,337</fullref><jref>Phys.Lett.,B423,337</jref><aref>hep-ph/9712307</aref></citation>
+ <citation><fullref>PHLTA,B115,349</fullref><jref>Phys.Lett.,B115,349</jref></citation>
+ <citation><fullref>NUCIA,C9,167</fullref><jref>Nuovo Cim.,C9,167</jref></citation>
+ <citation><fullref>PHLTA,B118,461</fullref><jref>Phys.Lett.,B118,461</jref></citation>
+ <citation><fullref>PRLTA,50,651</fullref><jref>Phys.Rev.Lett.,50,651</jref></citation>
+ <citation><fullref>PRLTA,52,1092</fullref><jref>Phys.Rev.Lett.,52,1092</jref></citation>
+ <citation><fullref>PRLTA,54,22</fullref><jref>Phys.Rev.Lett.,54,22</jref></citation>
+ <citation><fullref>PRLTA,57,1986</fullref><jref>Phys.Rev.Lett.,57,1986</jref></citation>
+ <citation><fullref>PRLTA,61,2522</fullref><jref>Phys.Rev.Lett.,61,2522</jref></citation>
+ <citation><fullref>PHLTA,B224,348</fullref><jref>Phys.Lett.,B224,348</jref></citation>
+ <citation><fullref>PHRVA,D59,052004</fullref><jref>Phys.Rev.,D59,052004</jref></citation>
+ <citation><fullref>NUPHA,B313,509</fullref><jref>Nucl.Phys.,B313,509</jref></citation>
+ <citation><fullref>ZEPYA,C50,385</fullref><jref>Z.Phys.,C50,385</jref></citation>
+ <citation><fullref>PHLTA,B269,227</fullref><jref>Phys.Lett.,B269,227</jref></citation>
+ <citation><fullref>PHLTA,B220,308</fullref><jref>Phys.Lett.,B220,308</jref></citation>
+ <citation><fullref>hep-ex/9803030  PHLTA,B427,217</fullref><jref>Phys.Lett.,B427,217</jref><aref>hep-ex/9803030</aref></citation>
+ <citation><fullref>hep-ex/9904020  PRLTA,83,1529</fullref><jref>Phys.Rev.Lett.,83,1529</jref><aref>hep-ex/9904020</aref></citation>
+ <citation><fullref>NUIMA,A376,36</fullref><jref>Nucl.Instrum.Meth.,A376,36</jref></citation>
+ <citation><fullref>NUIMA,A381,385</fullref><jref>Nucl.Instrum.Meth.,A381,385</jref></citation>
+ <citation><fullref>NUIMA,A276,371</fullref><jref>Nucl.Instrum.Meth.,A276,371</jref></citation>
+ <citation><fullref>PHRVA,D38,85</fullref><jref>Phys.Rev.,D38,85</jref></citation>
+ <citation><fullref>PHRVA,D39,3532</fullref><jref>Phys.Rev.,D39,3532</jref></citation>
+ <citation><fullref>hep-ex/9611007  PHLTA,B391,491</fullref><jref>Phys.Lett.,B391,491</jref><aref>hep-ex/9611007</aref></citation>
+ <citation><fullref>PHRVA,D34,2545</fullref><jref>Phys.Rev.,D34,2545</jref></citation>
+ <citation><fullref>NUIMA,69,287</fullref><jref>Nucl.Instrum.Meth.,69,287</jref></citation>
+ <citation><fullref>hep-ex/9901024  PHLTA,B449,137</fullref><jref>Phys.Lett.,B449,137</jref><aref>hep-ex/9901024</aref></citation>
+ <citation><fullref>hep-ex/9803006  PHLTA,B433,9</fullref><jref>Phys.Lett.,B433,9</jref><aref>hep-ex/9803006</aref></citation>
+ <citation><fullref>hep-ex/9807003  PRLTA,81,1562</fullref><jref>Phys.Rev.Lett.,81,1562</jref><aref>hep-ex/9807003</aref></citation>
+ <citation><fullref>hep-ex/9805006  PHLTA,B436,33</fullref><jref>Phys.Lett.,B436,33</jref><aref>hep-ex/9805006</aref></citation>
+ <citation><fullref>hep-ex/9912007  IMPAE,A15S1,229</fullref><jref>Int.J.Mod.Phys.,A15S1,229</jref><aref>hep-ex/9912007</aref></citation>
+ <citation><fullref>PHRVA,D23,1070</fullref><jref>Phys.Rev.,D23,1070</jref></citation>
+ <citation><fullref>PHRVA,D45,743</fullref><jref>Phys.Rev.,D45,743</jref></citation>
+ <citation><fullref>EPHJA,C3,1</fullref><jref>Eur.Phys.J.,C3,1</jref></citation>
+ <experiment>SOUDAN-2</experiment>
+ <ppfin-acct>LI.ARA</ppfin-acct>
+ <desy-keywords>nucleon: semileptonic decay</desy-keywords>
+ <desy-keywords>search for: decay</desy-keywords>
+ <desy-keywords>p: lifetime</desy-keywords>
+ <desy-keywords>lower limit</desy-keywords>
+ <desy-keywords>supersymmetry</desy-keywords>
+ <desy-keywords>grand unified theory</desy-keywords>
+ <desy-keywords>deep underground detector: Soudan</desy-keywords>
+ <desy-keywords>experimental results</desy-keywords>
+ <desy-keywords>p --&gt; K0 lepton+</desy-keywords>
+ <desy-keywords>n --&gt; K0 neutrino</desy-keywords>
+ <desy-abs-num>D00-00560</desy-abs-num>
+ <desy-class-code>B</desy-class-code>
+ <date-updated>2008-02-20</date-updated>
+ <account-upd>LI.HPN</account-upd>
+ <date-added>1999-10-15</date-added>
+ <acct-added>LI.LIB</acct-added>
+ <tt>Search for nucleon decay into lepton + K0 final states using Soudan 2.</tt>
+ <lanl><bull>hep-ex/9910026</bull><cat>hep-ex</cat></lanl>
+ <url-str>
+  <url>DOI</url>
+  <urldoc>10.1103/PhysRevD.61.072004</urldoc>
+  <turl>http://dx.doi.org/10.1103/PhysRevD.61.072004</turl>
+ </url-str>
+ <url-str>
+  <url>PDGLIV</url>
+  <urldoc>PHRVA,D61,072004</urldoc>
+  <turl>http://pdglive.lbl.gov/REFERENCE_info1.brl?slacrpp=PHRVA,D61,072004</turl>
+ </url-str>
+ <url-str>
+  <url>PHRVA-D</url>
+  <urldoc>V61/E072004/</urldoc>
+  <turl>http://link.aps.org/abstract/PRD/V61/E072004/</turl>
+ </url-str>
+ <time-upd>13:10:52</time-upd>
+ <new-desy-check>Preprint - Wall, D. (rec.Oct.99) 37 p.</new-desy-check>
+ <catdate>1999-10-15</catdate>
+ <cattime>10:47:26</cattime>
+ <hidden-note>Authors obtained from HEPEX-9910026 in PROCESS.AUTHORS, 10/15/99</hidden-note>
+ <cernkey>0330444</cernkey>
+ <field-code>Experiment-HEP</field-code>
+ <type-code>Published</type-code>
+ <doi>10.1103/PhysRevD.61.072004</doi>
+ <uniquetex>Wall:1999bh</uniquetex>
+     <collection>Published</collection>
+     <collection>Arxiv</collection>
+     <collection>Citeable</collection>
+     <topic>CORE</topic>
+</goal_record>
+
+
+<goal_record>
+ <irn>4180828</irn>
+ <doc-type>PUBLISHED</doc-type>
+ <astr>
+  <astr1>
+   <author>Jachim, S.P.</author>
+  </astr1>
+  <astr1>
+   <author>Ziomek, C.</author>
+  </astr1>
+  <astr1>
+   <author>Natter, E.F.</author>
+  </astr1>
+  <astr1>
+   <author>Regan, A.H.</author>
+  </astr1>
+  <astr1>
+   <author>Hill, J.</author>
+  </astr1>
+  <astr1>
+   <author>Eaton, L.</author>
+  </astr1>
+  <astr1>
+   <author>Gutscher, W.D.</author>
+  </astr1>
+  <astr1>
+   <author>Curtin, M.</author>
+  </astr1>
+  <astr1>
+   <author>Denney, P.</author>
+  </astr1>
+  <astr1>
+   <author>Hansberry, E.</author>
+  </astr1>
+  <astr1>
+   <author>Brooks, T.</author>
+  </astr1>
+  <affiliation type="AUTHAFF" key="3727"> Los Alamos</affiliation>
+ </astr>
+ <title>The Los Alamos VXI-based modular RF control system</title>
+ <pub-note>Conf.Proc.C930517:1154-1156,1993</pub-note>
+ <jour-info><jname>Conf.Proc.</jname><jvol>C930517</jvol><jpage>1154-1156</jpage><jyear>19</jyear></jour-info>
+ <date>1993</date>
+ <ppf-subject>Instrumentation, D</ppf-subject>
+ <meeting-note>Prepared for 1993 IEEE Particle Accelerator Conference (PAC 93), Washington, DC, 17-20 May 1993</meeting-note>
+ <desy-pub-note>In *Washington 1993, Particle accelerator, vol. 2* 1154-1156</desy-pub-note>
+ <desy-keywords>talk: Washington 1993/05/17</desy-keywords>
+ <desy-abs-num>D97-11492</desy-abs-num>
+ <date-updated>2008-04-11</date-updated>
+ <account-upd>LI.HOC</account-upd>
+ <date-added>1999-09-13</date-added>
+ <acct-added>DESYHEPI</acct-added>
+ <url-str>
+  <url>JACOW</url>
+  <urldoc>p93/PDF/PAC1993_1154.PDF</urldoc>
+  <turl>http://accelconf.web.cern.ch/AccelConf/p93/PDF/PAC1993_1154.PDF</turl>
+ </url-str>
+ <time-upd>10:53:14</time-upd>
+<conf>
+ <conf-code>C93/05/17</conf-code>
+ <conf-place>Washington, DC</conf-place>
+ <conf-dates>17-20 May 1993</conf-dates>
+ <conf-start>1993-05-17</conf-start>
+<conf-type> for</conf-type>
+</conf>
+ <type-code>Conference Paper</type-code>
+ <uniquetex>Jachim:1993wb</uniquetex>
+     <collection>Conference</collection>
+     <topic>CORE</topic>
+</goal_record>
+</records>
+
+

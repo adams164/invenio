@@ -1,0 +1,6 @@
+Most of the material to be touched is still in the Makefile; this includes
+the database updates necessary to have a fully functioning Invenio system and
+some convenience targets, like make install-ugly.
+
+Some other things that need attention are utility subdirectories like kbs
+which were never available from the 'make install' target.

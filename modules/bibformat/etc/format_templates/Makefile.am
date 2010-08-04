@@ -17,17 +17,14 @@
 
 etcdir = $(sysconfdir)/bibformat/format_templates
 
-etc_DATA = Default_HTML_captions.bft Picture_HTML_brief.bft \
-	   Default_HTML_detailed.bft Default_HTML_portfolio.bft \
-	   Picture_HTML_detailed.bft Default_HTML_brief.bft \
-	   BibTeX.bft MARCXML.bft Excel.bft \
-	   Default_HTML_similarity.bft NLM.xsl \
-	   OAI_DC.xsl DC.xsl EndNote.xsl RSS.xsl \
-	   RefWorks.xsl MODS.xsl \
-	   Default_HTML_references.bft Default_HTML_files.bft \
-	   Default_HTML_actions.bft Journal_HTML_detailed.bft \
-	   Journal_HTML_brief.bft \
-           Poetry_HTML_brief.bft Poetry_HTML_detailed.bft
+etc_DATA = BibTeX.bft Default_HTML_actions.bft Default_HTML_brief.bft \
+           Default_HTML_captions.bft Default_HTML_conferences.bft \
+           Default_HTML_detailed.bft Default_HTML_files.bft \
+           Default_HTML_portfolio.bft Default_HTML_references.bft \
+           Default_HTML_similarity.bft Excel.bft HTML_Latex_EU.bft \
+           HTML_Latex_US.bft Journal_HTML_brief.bft Journal_HTML_detailed.bft \
+           MARCXML.bft Picture_HTML_brief.bft Picture_HTML_detailed.bft \
+           Poetry_HTML_brief.bft Poetry_HTML_detailed.bft 
 
 tmpdir = $(prefix)/var/tmp
 
