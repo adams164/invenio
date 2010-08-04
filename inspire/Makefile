@@ -300,6 +300,28 @@ reset-inspire-portalbox-configuration:
 	echo -e 'from invenio.dbquery import run_sql;\
 	body = open("webhelp/inspire_sidebar.html").read();\
 	run_sql("UPDATE portalbox SET body=%s WHERE id=2", (body,))' | $(PYTHON)
+	    ## bug portalbox
+	echo "INSERT INTO portalbox VALUES (3, '', 'FIXME')" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'bg', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'ca', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'de', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'el', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'en', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'es', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'fr', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'hr', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'it', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'ja', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'no', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'pl', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'pt', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'sk', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'sv', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'zh_CN', 'ne', 100)" | $(BINDIR)/dbexec
+	echo "INSERT INTO collection_portalbox VALUES (1, 3, 'zh_TW', 'ne', 100)" | $(BINDIR)/dbexec
+		# now insert placeholder text into bug box
+	echo "UPDATE portalbox SET body=' ' WHERE id=3"|/opt/cds-invenio/bin/dbexec
+	    # in practice this gets updated by the portalboxes/update_portalboxes script from cron
 	@echo ">>> Done. You may want to run 'webcoll -u admin -f' to see the new portalboxes."
 
 reset-inspire-search-sort-field-configuration:

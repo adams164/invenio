@@ -643,6 +643,12 @@ a.footer:hover {
    padding: 2px;
    font-size: x-small;
 }
+.bugboxtd {
+   vertical-align: top;
+   text-align: left;
+   border-width: 2px;
+   font-size: small;
+}
 .admin_wvar, .admin_w200, .admin_wvar_nomargin {
    color: #000;
    background: white;
