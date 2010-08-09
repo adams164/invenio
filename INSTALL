@@ -44,7 +44,7 @@ Contents
 
           $ sudo aptitude install rxp python-psyco sbcl cmucl \
               pylint pychecker pyflakes python-profiler python-epydoc \
-              libapache2-mod-xsendfile openoffice.org
+              libapache2-mod-xsendfile openoffice.org python-feedparser
 
         Moreover, you should install some Message Transfer Agent (MTA)
         such as Postfix so that CDS Invenio can email notification
