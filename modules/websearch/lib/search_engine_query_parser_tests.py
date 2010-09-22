@@ -421,6 +421,49 @@ class TestSpiresToInvenioSyntaxConverter(unittest.TestCase):
         inv_search = "title:bob and title:sam and title:couch"
         self._compare_searches(inv_search, spi_search)
 
+    def test_date_by_yr(self):
+        """SPIRES search syntax - searching by date year"""
+        spi_search = "find date 2002"
+        inv_search = "year:2002"
+        self._compare_searches(inv_search, spi_search)
+
+    def test_date_by_lt_yr(self):
+        """SPIRES search syntax - searching by date < year"""
+        spi_search = "find date < 2002"
+        inv_search = 'year:0->2002'
+        self._compare_searches(inv_search, spi_search)
+
+    def test_date_by_gt_yr(self):
+        """SPIRES search syntax - searching by date > year"""
+        spi_search = "find date > 1980"
+        inv_search = 'year:1980->9999'
+        self._compare_searches(inv_search, spi_search)
+
+    def test_date_by_yr_mo(self):
+        """SPIRES search syntax - searching by date 1976-04"""
+        spi_search = "find date 1976-04"
+        inv_search = 'year:"1976-04"'
+        self._compare_searches(inv_search, spi_search)
+
+    def test_date_by_eq_yr_mo(self):
+        """SPIRES search syntax - searching by date 1976-04"""
+        spi_search = "find date 1976-04"
+        inv_search = 'year:"1976-04"'
+        self._compare_searches(inv_search, spi_search)
+
+    def test_date_by_lt_yr_mo(self):
+        """SPIRES search syntax - searching by date < 1978-10-21"""
+        spi_search = "find date < 1978-10-21"
+        inv_search = 'year:"0->1978-10-21"'
+        self._compare_searches(inv_search, spi_search)
+
+    def test_date_by_gt_yr_mo(self):
+        """SPIRES search syntax - searching by date > 1978-10-21"""
+        spi_search = "find date > 1978-10-21"
+        inv_search = 'year:"1978-10-21->9999"'
+        self._compare_searches(inv_search, spi_search)
+
+
 
 TEST_SUITE = make_test_suite(TestSearchQueryParenthesisedParser,
                              TestSpiresToInvenioSyntaxConverter)
