@@ -206,6 +206,24 @@ try:
 except Exception:
     restricted_collection_cache = RestrictedCollectionDataCacher()
 
+def timer_start():
+    """Used by a lot of verbose output generation for function timing.
+
+    Example:
+    >>> elapsed_time = timer_start()
+    >>> # do some calculations
+    >>> elapsed_time()
+    5.75
+    >>>
+
+    @rtype   function
+    @returns 0 argument function which returns the difference between when
+             it is called and when this is called.
+    """
+    start = os.times()[4]
+    return lambda : os.times()[4] - start
+
+
 def get_permitted_restricted_collections(user_info):
     """Return a list of collection that are restricted but for which the user
     is authorized."""
@@ -1704,6 +1722,17 @@ def browse_in_bibwords(req, p, f, ln=CFG_SITE_LANG):
     ))
     return
 
+def get_full_hitset():
+    """Return our entire universe of documents
+
+    @rtype:  HitSet
+    @return: everything
+    """
+    hitset = HitSet(trailing_bits=1)
+    hitset.discard(0)
+    return hitset
+
+
 def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, ln=CFG_SITE_LANG, display_nearest_terms_box=True):
     """Search for complex pattern 'p' within field 'f' according to
        matching type 'm'.  Return hitset of recIDs.
@@ -1732,27 +1761,153 @@ def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, l
        This function is suitable as a mid-level API.
     """
 
-    _ = gettext_set_language(ln)
+    human_out = of.startswith('h')
 
-    hitset_empty = HitSet()
     # sanity check:
     if not p:
-        hitset_full = HitSet(trailing_bits=1)
-        hitset_full.discard(0)
-        # no pattern, so return all universe
-        return hitset_full
+        return get_full_hitset()
+
     # search stage 1: break up arguments into basic search units:
-    if verbose and of.startswith("h"):
-        t1 = os.times()[4]
+    if verbose and human_out:
+        elapsed_time = timer_start()
     basic_search_units = create_basic_search_units(req, p, f, m, of)
-    if verbose and of.startswith("h"):
-        t2 = os.times()[4]
+    if verbose and human_out:
         print_warning(req, "Search stage 1: basic search units are: %s" % cgi.escape(repr(basic_search_units)))
-        print_warning(req, "Search stage 1: execution took %.2f seconds." % (t2 - t1))
+        print_warning(req, "Search stage 1: execution took %.2f seconds." % elapsed_time())
+
+    return search_pattern_given_bsus(req, basic_search_units, ap, of, verbose, ln, display_nearest_terms_box)
+
+
+def search_pattern_given_bsus(req, basic_search_units, ap, of, verbose, ln, display_nearest_terms_box):
+    """Search for basic search units and return a HitSet.
+
+       See L{search_pattern}.
+       See Also L{search_pattern_parenthesised}.
+       See Also L{create_basic_search_units}.
+
+       Retrieve the hitset for each basic search unit tuple.
+
+       The function uses multi-stage searching algorithm in case of no
+       exact match found.  See the Search Internals document for
+       detailed description.
+
+       The 'ap' argument governs whether an alternative patterns are to
+       be used in case there is no direct hit for (p,f,m).  For
+       example, whether to replace non-alphanumeric characters by
+       spaces if it would give some hits.  See the Search Internals
+       document for detailed description.  (ap=0 forbits the
+       alternative pattern usage, ap=1 permits it.)
+
+       The 'of' argument governs whether to print or not some
+       information to the user in case of no match found.  (Usually it
+       prints the information in case of HTML formats, otherwise it's
+       silent).
+
+       The 'verbose' argument controls the level of debugging information
+       to be printed (0=least, 9=most).
+
+       All the parameters are assumed to have been previously washed.
+
+       This function is suitable as a mid-level API.
+    """
+    _ = gettext_set_language(ln)
+    human_out = of.startswith('h')
+
+    def display_nearest_and_get_empty(bsu_f, bsu_p, bsu_m, makebox):
+        """Return the empty HitSet.  Also, display the nearest terms box.
+
+           @type  bsu_f: string
+           @param bsu_f: search field to search in
+
+           @type  bsu_p: string
+           @param bsu_p: search string to find in bsu_f
+
+           @type  bsu_m: string
+           @param bsu_m: type of search to perform, for p in f
+
+           @type  makebox: bool
+           @param makebox: Whether or not to display the nearest terms box
+        """
+        if makebox:
+            if bsu_f == "recid":
+                print_warning(req, _("Requested record does not seem to exist."))
+            else:
+                print_warning(req, create_nearest_terms_box(req.argd, bsu_p, bsu_f, bsu_m, ln=ln))
+        return HitSet()
+
+    def hitset_anywhere(req, ln, bsus, bsu_hs, makebox):
+        """Build and return the boolean combination of hits for all BSUs.
+
+        Side effect is to output a "Boolean query returned no hits" box
+        via websearch_templates.tmpl_search_no_boolean_hits.
+
+        @type req:  L{invenio.webinterface_handler_wsgi.SimulatedModPythonRequest}
+        @param req: The mock object used for user I/o
+
+        @type  bsus: list
+        @param bsus: A list of (o,p,f,m) tuples from L{create_basic_search_units}
+
+        @type  bsu_hs: list
+        @param bsu_hs: A list of HitSets corresponding 1:1 with the bsus
+
+        @rtype:  HitSet
+        @return: boolean combination of all hitsets for all BSUs.
+        """
+        # search stage 3: apply boolean query for each search unit:
+        if verbose and human_out:
+            elapsed_time = timer_start()
+
+        # let the initial set be the complete universe:
+        hitset_in_any_collection = get_full_hitset()
+
+        for bsu_id in xrange(len(bsus)):
+            op = bsus[bsu_id][0]
+            hitset = bsu_hs[bsu_id]
+            if op == '+':
+                hitset_in_any_collection.intersection_update(hitset)
+            elif op == '-':
+                hitset_in_any_collection.difference_update(hitset)
+            elif op == '|':
+                hitset_in_any_collection.union_update(hitset)
+            else:
+                if human_out:
+                    print_warning(req, "Invalid set operation %s." % cgi.escape(op), "Error")
+
+        if len(hitset_in_any_collection) == 0:
+            # no hits found, propose alternative boolean query:
+            if makebox:
+                nearestterms = []
+                for bsu_id in range(len(bsus)):
+                    dummy_o, p, f, dummy_m = bsus[bsu_id]
+                    if p.startswith("%") and p.endswith("%"):
+                        p = "'" + p[1:-1] + "'"
+                    hitcount = len(bsu_hs[bsu_id])
+
+                    # create a similar query, but with the basic search unit only
+                    argd = {}
+                    argd.update(req.argd)
+
+                    argd['p'] = p
+                    argd['f'] = f
+
+                    nearestterms.append((p, hitcount, argd))
+
+                text = websearch_templates.tmpl_search_no_boolean_hits(
+                         ln=ln,  nearestterms=nearestterms)
+                print_warning(req, text)
+
+        if verbose and human_out:
+            print_warning(req, "Search stage 3: boolean query gave %d hits." % len(hitset_in_any_collection))
+            print_warning(req, "Search stage 3: execution took %.2f seconds." % elapsed_time())
+        return hitset_in_any_collection
+
+
     # search stage 2: do search for each search unit and verify hit presence:
-    if verbose and of.startswith("h"):
-        t1 = os.times()[4]
+    if verbose and human_out:
+        elapsed_time = timer_start()
+
     basic_search_units_hitsets = []
+
     #prepare hiddenfield-related..
     myhiddens = CFG_BIBFORMAT_HIDDEN_TAGS
     can_see_hidden = False
@@ -1762,9 +1917,9 @@ def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, l
     if can_see_hidden:
         myhiddens = []
 
-    if CFG_INSPIRE_SITE and of.startswith('h'):
+    if CFG_INSPIRE_SITE and human_out:
         # fulltext/caption search warnings for INSPIRE:
-        fields_to_be_searched = [f for o,p,f,m in basic_search_units]
+        fields_to_be_searched = [f for dummy_o,dummy_p,f,dummy_m in basic_search_units]
         if 'fulltext' in fields_to_be_searched:
             print_warning(req, _("Warning: full-text search is only available for a subset of papers mostly from 2006-2010."))
         elif 'caption' in fields_to_be_searched:
@@ -1774,7 +1929,7 @@ def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, l
         bsu_o, bsu_p, bsu_f, bsu_m = basic_search_units[idx_unit]
         basic_search_unit_hitset = search_unit(bsu_p, bsu_f, bsu_m)
         # FIXME: workaround for not having phrase index yet
-        if bsu_f == 'fulltext' and bsu_m != 'w' and of.startswith('h'):
+        if bsu_f == 'fulltext' and bsu_m != 'w' and human_out:
             print_warning(req, _("No phrase index available for fulltext yet, looking for word combination..."))
         #check that the user is allowed to search with this tag
         #if he/she tries it
@@ -1785,13 +1940,13 @@ def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, l
                 if samelenfield == htag: #user searches by a hidden tag
                     #we won't show you anything..
                     basic_search_unit_hitset = HitSet()
-                    if verbose >= 9 and of.startswith("h"):
+                    if verbose >= 9 and human_out:
                         print_warning(req, "Pattern %s hitlist omitted since \
                                             it queries in a hidden tag %s" %
                                       (repr(bsu_p), repr(myhiddens)))
                     display_nearest_terms_box=False #..and stop spying, too.
 
-        if verbose >= 9 and of.startswith("h"):
+        if verbose >= 9 and human_out:
             print_warning(req, "Search stage 1: pattern %s gave hitlist %s" % (cgi.escape(bsu_p), basic_search_unit_hitset))
         if len(basic_search_unit_hitset) > 0 or \
            ap==0 or \
@@ -1810,12 +1965,12 @@ def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, l
                     bsu_pn = re.sub(r'[^a-zA-Z0-9\s\:]+', "*", bsu_p)
                 else: # it is WRD query
                     bsu_pn = re.sub(r'[^a-zA-Z0-9\s\:]+', " ", bsu_p)
-                if verbose and of.startswith('h') and req:
+                if verbose and req and human_out:
                     print_warning(req, "Trying (%s,%s,%s)" % (cgi.escape(bsu_pn), cgi.escape(bsu_f), cgi.escape(bsu_m)))
                 basic_search_unit_hitset = search_pattern(req=None, p=bsu_pn, f=bsu_f, m=bsu_m, of="id", ln=ln)
                 if len(basic_search_unit_hitset) > 0:
                     # we retain the new unit instead
-                    if of.startswith('h'):
+                    if human_out:
                         print_warning(req, _("No exact match found for %(x_query1)s, using %(x_query2)s instead...") % \
                                       {'x_query1': "<em>" + cgi.escape(bsu_p) + "</em>",
                                        'x_query2': "<em>" + cgi.escape(bsu_pn) + "</em>"})
@@ -1823,73 +1978,19 @@ def search_pattern(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, l
                     basic_search_units_hitsets.append(basic_search_unit_hitset)
                 else:
                     # stage 2-3: no hits found either, propose nearest indexed terms:
-                    if of.startswith('h') and display_nearest_terms_box:
-                        if req:
-                            if bsu_f == "recid":
-                                print_warning(req, _("Requested record does not seem to exist."))
-                            else:
-                                print_warning(req, create_nearest_terms_box(req.argd, bsu_p, bsu_f, bsu_m, ln=ln))
-                    return hitset_empty
+                    return display_nearest_and_get_empty(bsu_f, bsu_p, bsu_m, human_out and display_nearest_terms_box)
             else:
                 # stage 2-3: no hits found either, propose nearest indexed terms:
-                if of.startswith('h') and display_nearest_terms_box:
-                    if req:
-                        if bsu_f == "recid":
-                            print_warning(req, _("Requested record does not seem to exist."))
-                        else:
-                            print_warning(req, create_nearest_terms_box(req.argd, bsu_p, bsu_f, bsu_m, ln=ln))
-                return hitset_empty
-    if verbose and of.startswith("h"):
-        t2 = os.times()[4]
+                return display_nearest_and_get_empty(bsu_f, bsu_p, bsu_m, human_out and display_nearest_terms_box)
+
+    if verbose and human_out:
         for idx_unit in range(0, len(basic_search_units)):
             print_warning(req, "Search stage 2: basic search unit %s gave %d hits." %
                           (basic_search_units[idx_unit][1:], len(basic_search_units_hitsets[idx_unit])))
-        print_warning(req, "Search stage 2: execution took %.2f seconds." % (t2 - t1))
-    # search stage 3: apply boolean query for each search unit:
-    if verbose and of.startswith("h"):
-        t1 = os.times()[4]
-    # let the initial set be the complete universe:
-    hitset_in_any_collection = HitSet(trailing_bits=1)
-    hitset_in_any_collection.discard(0)
-    for idx_unit in xrange(len(basic_search_units)):
-        this_unit_operation = basic_search_units[idx_unit][0]
-        this_unit_hitset = basic_search_units_hitsets[idx_unit]
-        if this_unit_operation == '+':
-            hitset_in_any_collection.intersection_update(this_unit_hitset)
-        elif this_unit_operation == '-':
-            hitset_in_any_collection.difference_update(this_unit_hitset)
-        elif this_unit_operation == '|':
-            hitset_in_any_collection.union_update(this_unit_hitset)
-        else:
-            if of.startswith("h"):
-                print_warning(req, "Invalid set operation %s." % cgi.escape(this_unit_operation), "Error")
-    if len(hitset_in_any_collection) == 0:
-        # no hits found, propose alternative boolean query:
-        if of.startswith('h') and display_nearest_terms_box:
-            nearestterms = []
-            for idx_unit in range(0, len(basic_search_units)):
-                bsu_o, bsu_p, bsu_f, bsu_m = basic_search_units[idx_unit]
-                if bsu_p.startswith("%") and bsu_p.endswith("%"):
-                    bsu_p = "'" + bsu_p[1:-1] + "'"
-                bsu_nbhits = len(basic_search_units_hitsets[idx_unit])
+        print_warning(req, "Search stage 2: execution took %.2f seconds." % elapsed_time())
 
-                # create a similar query, but with the basic search unit only
-                argd = {}
-                argd.update(req.argd)
-
-                argd['p'] = bsu_p
-                argd['f'] = bsu_f
-
-                nearestterms.append((bsu_p, bsu_nbhits, argd))
-
-            text = websearch_templates.tmpl_search_no_boolean_hits(
-                     ln=ln,  nearestterms=nearestterms)
-            print_warning(req, text)
-    if verbose and of.startswith("h"):
-        t2 = os.times()[4]
-        print_warning(req, "Search stage 3: boolean query gave %d hits." % len(hitset_in_any_collection))
-        print_warning(req, "Search stage 3: execution took %.2f seconds." % (t2 - t1))
-    return hitset_in_any_collection
+    return hitset_anywhere(req, ln, basic_search_units, basic_search_units_hitsets,
+                           human_out and display_nearest_terms_box)
 
 def search_pattern_parenthesised(req=None, p=None, f=None, m=None, ap=0, of="id", verbose=0, ln=CFG_SITE_LANG, display_nearest_terms_box=True):
     """Search for complex pattern 'p' containing parenthesis within field 'f' according to
@@ -1908,8 +2009,18 @@ def search_pattern_parenthesised(req=None, p=None, f=None, m=None, ap=0, of="id"
 
     # sanity check: do not call parenthesised parser for search terms
     # like U(1):
+    ### DEBUG HACK FIXME XXX JRBL RETURN HERE
     if not re_pattern_parens.search(p):
         return search_pattern(req, p, f, m, ap, of, verbose, ln, display_nearest_terms_box=display_nearest_terms_box)
+
+    if CFG_INSPIRE_SITE and spires_syntax_query:
+        # setting ap=0 to turn off approximate matching for 0 results.
+        # Doesn't work well in combinations.
+        # FIXME: The right fix involves collecting statuses for each
+        #        hitset, then showing a nearest terms box exactly once,
+        #        outside indexed loop below
+        ap = 0
+        display_nearest_terms_box=False
 
     # Try searching with parentheses
     try:
@@ -1930,15 +2041,6 @@ def search_pattern_parenthesised(req=None, p=None, f=None, m=None, ap=0, of="id"
             current_operator = parsing_result[index]
             current_pattern = parsing_result[index+1]
 
-            if CFG_INSPIRE_SITE and spires_syntax_query:
-                # setting ap=0 to turn off approximate matching for 0 results.
-                # Doesn't work well in combinations.
-                # FIXME: The right fix involves collecting statuses for each
-                #        hitset, then showing a nearest terms box exactly once,
-                #        outside this loop.
-                ap = 0
-                display_nearest_terms_box=False
-
             # obtain a hitset for the current pattern
             current_hitset = search_pattern(req, current_pattern, f, m, ap, of, verbose, ln, display_nearest_terms_box=display_nearest_terms_box)
 
@@ -1954,7 +2056,7 @@ def search_pattern_parenthesised(req=None, p=None, f=None, m=None, ap=0, of="id"
 
         return result_hitset
 
-    # If searching with parenteses fails, perform search ignoring parentheses
+    # If searching with parentheses fails, perform search ignoring parentheses
     except SyntaxError:
 
         print_warning(req, _("Search syntax misunderstood. Ignoring all parentheses in the query. If this doesn't help, please check your search and try again."))
@@ -1979,19 +2081,19 @@ def search_unit(p, f=None, m=None):
     """
 
     ## create empty output results set:
-    set = HitSet()
+    hitset = HitSet()
     if not p: # sanity checking
-        return set
+        return hitset
     if f == 'datecreated':
-        set = search_unit_in_bibrec(p, p, 'c')
+        hitset = search_unit_in_bibrec(p, p, 'c')
     elif f == 'datemodified':
-        set = search_unit_in_bibrec(p, p, 'm')
+        hitset = search_unit_in_bibrec(p, p, 'm')
     elif f == 'refersto':
         # we are doing search by the citation count
-        set = search_unit_refersto(p)
+        hitset = search_unit_refersto(p)
     elif f == 'citedby':
         # we are doing search by the citation count
-        set = search_unit_citedby(p)
+        hitset = search_unit_citedby(p)
     elif m == 'a' or m == 'r':
         # FIXME: workaround for not having phrase index yet
         if f == 'fulltext':
@@ -1999,16 +2101,16 @@ def search_unit(p, f=None, m=None):
         # we are doing either phrase search or regexp search
         index_id = get_index_id_from_field(f)
         if index_id != 0:
-            set = search_unit_in_idxphrases(p, f, m)
+            hitset = search_unit_in_idxphrases(p, f, m)
         else:
-            set = search_unit_in_bibxxx(p, f, m)
+            hitset = search_unit_in_bibxxx(p, f, m)
     elif p.startswith("cited:"):
         # we are doing search by the citation count
-        set = search_unit_by_times_cited(p[6:])
+        hitset = search_unit_by_times_cited(p[6:])
     else:
         # we are doing bibwords search by default
-        set = search_unit_in_bibwords(p, f)
-    return set
+        hitset = search_unit_in_bibwords(p, f)
+    return hitset
 
 def search_unit_in_bibwords(word, f, decompress=zlib.decompress):
     """Searches for 'word' inside bibwordsX table for field 'f' and returns hitset of recIDs."""
@@ -2266,7 +2368,7 @@ def intersect_results_with_collrecs(req, hitset_in_any_collection, colls, ap=0, 
 
     # search stage 4: intersect with the collection universe:
     if verbose and of.startswith("h"):
-        t1 = os.times()[4]
+        elapsed_time = timer_start()
     results = {}
     results_nbhits = 0
     for coll in colls:
@@ -2293,9 +2395,8 @@ def intersect_results_with_collrecs(req, hitset_in_any_collection, colls, ap=0, 
                                      "the desired restricted collection first."))
             results = {}
     if verbose and of.startswith("h"):
-        t2 = os.times()[4]
         print_warning(req, "Search stage 4: intersecting with collection universe gave %d hits." % results_nbhits)
-        print_warning(req, "Search stage 4: execution took %.2f seconds." % (t2 - t1))
+        print_warning(req, "Search stage 4: execution took %.2f seconds." % elapsed_time())
     return results
 
 def intersect_results_with_hitset(req, results, hitset, ap=0, aptext="", of="hb"):
@@ -4465,17 +4566,15 @@ def perform_request_search(req=None, cc=CFG_SITE_NAME, c=None, p="", f="", rg=CF
                 print_records_epilogue(req, of)
         else:
             # record well exists, so find similar ones to it
-            t1 = os.times()[4]
+            elapsed_time = timer_start()
             results_similar_recIDs, results_similar_relevances, results_similar_relevances_prologue, results_similar_relevances_epilogue, results_similar_comments = \
                                     rank_records(rm, 0, get_collection_reclist(cc), string.split(p), verbose)
             if results_similar_recIDs:
-                t2 = os.times()[4]
-                cpu_time = t2 - t1
                 if of.startswith("h"):
                     req.write(print_search_info(p, f, sf, so, sp, rm, of, ot, cc, len(results_similar_recIDs),
                                                 jrec, rg, aas, ln, p1, p2, p3, f1, f2, f3, m1, m2, m3, op1, op2,
                                                 sc, pl_in_url,
-                                                d1y, d1m, d1d, d2y, d2m, d2d, dt, cpu_time))
+                                                d1y, d1m, d1d, d2y, d2m, d2d, dt, elapsed_time()))
                     print_warning(req, results_similar_comments)
                     print_records(req, results_similar_recIDs, jrec, rg, of, ot, ln,
                                   results_similar_relevances, results_similar_relevances_prologue, results_similar_relevances_epilogue, search_pattern=p, verbose=verbose, sf=sf, so=so, sp=sp, rm=rm)
@@ -4516,16 +4615,14 @@ def perform_request_search(req=None, cc=CFG_SITE_NAME, c=None, p="", f="", rg=CF
                 print_records_epilogue(req, of)
         else:
             # record well exists, so find co-cited ones:
-            t1 = os.times()[4]
+            elapsed_time = timer_start()
             results_cocited_recIDs = map(lambda x: x[0], calculate_co_cited_with_list(int(recID)))
             if results_cocited_recIDs:
-                t2 = os.times()[4]
-                cpu_time = t2 - t1
                 if of.startswith("h"):
                     req.write(print_search_info(p, f, sf, so, sp, rm, of, ot, CFG_SITE_NAME, len(results_cocited_recIDs),
                                                 jrec, rg, aas, ln, p1, p2, p3, f1, f2, f3, m1, m2, m3, op1, op2,
                                                 sc, pl_in_url,
-                                                d1y, d1m, d1d, d2y, d2m, d2d, dt, cpu_time))
+                                                d1y, d1m, d1d, d2y, d2m, d2d, dt, elapsed_time()))
                     print_records(req, results_cocited_recIDs, jrec, rg, of, ot, ln, search_pattern=p, verbose=verbose, sf=sf, so=so, sp=sp, rm=rm)
                 elif of=="id":
                     return results_cocited_recIDs
@@ -4600,7 +4697,7 @@ def perform_request_search(req=None, cc=CFG_SITE_NAME, c=None, p="", f="", rg=CF
         if of.startswith("h"):
             req.write(create_search_box(cc, colls_to_display, p, f, rg, sf, so, sp, rm, of, ot, aas, ln, p1, f1, m1, op1,
                                         p2, f2, m2, op2, p3, f3, m3, sc, pl, d1y, d1m, d1d, d2y, d2m, d2d, dt, jrec, ec, action))
-        t1 = os.times()[4]
+        elapsed_time = timer_start()
         results_in_any_collection = HitSet()
         if aas == 1 or (p1 or p2 or p3):
             ## 3A - advanced search
@@ -4773,8 +4870,7 @@ def perform_request_search(req=None, cc=CFG_SITE_NAME, c=None, p="", f="", rg=CF
                     print_records_epilogue(req, of)
                 return page_end(req, of, ln)
 
-        t2 = os.times()[4]
-        cpu_time = t2 - t1
+        cpu_time = elapsed_time()
         ## search stage 6: display results:
         results_final_nb_total = 0
         results_final_nb = {} # will hold number of records found in each collection
