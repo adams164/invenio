@@ -612,11 +612,17 @@ def kb_export(req, kbname="", format="kbr", searchkey="", searchvalue="", search
         res = bibknowledge.get_kbd_values(kbname, searchvalue)
         if not res:
             req.write("\n") #in order to say something
-        for r in res:
+        if format == 'jquery':
+            req.content_type = 'application/json'
             if not searchvalue:
-                req.write(r+"\n") #output all
-            if searchvalue and r.count(searchvalue) > 0:
-                req.write(r+"\n") #output matching lines
+                return json.dumps(res)
+            return json.dumps([r for r in res if r.count(searchvalue)>0])
+        else:
+            for r in res:
+                if not searchvalue:
+                    req.write(r+"\n") #output all
+                if searchvalue and r.count(searchvalue) > 0:
+                    req.write(r+"\n") #output matching lines
     if kbtype == 't': #taxonomy: output the file
         kbfilename = CFG_WEBDIR+"/kbfiles/"+str(kbid)+".rdf"
         try:
