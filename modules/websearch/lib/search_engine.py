@@ -5236,7 +5236,9 @@ def get_most_popular_field_values(recids, tags, exclude_values=None, count_repet
     if not exclude_values:
         exclude_values = []
     if isinstance(tags, str):
-        tags = (tags,)
+        ltags = [tags]
+        ltags.extend(get_field_tags(tags))
+        tags = ltags
     ## find values to count:
     vals_to_count = []
     displaytmp = {}
