@@ -125,22 +125,6 @@ def perform_request_knowledge_base_show_attributes(kb_id, ln=CFG_SITE_LANG,
                                                                 description,
                                                                 sortby, kb_type)
 
-
-def perform_request_knowledge_base_show_dependencies(kb_id, ln=CFG_SITE_LANG,
-                                                     sortby="to"):
-    """
-    Show the dependencies of a kb
-
-    @param ln language
-    @param kb a knowledge base id
-    @param sortby the sorting criteria ('from' or 'to')
-    @return the dependencies of the given knowledge base
-    """
-    name = bibknowledge_dblayer.get_kb_name(kb_id)
-    format_elements = bibknowledge.get_elements_that_use_kb(name)
-
-    return bibknowledge_templates.tmpl_admin_kb_show_dependencies(ln, kb_id, name, sortby, format_elements)
-
 def perform_request_verify_rule(ln, kbid, left, right, leftorright, currentname, tuples):
     """
     Returns a page element by which the user chooses an action:

@@ -163,50 +163,6 @@ def get_kb_id(kb_name):
 # Knowledge Bases Dependencies
 ##
 
-def get_elements_that_use_kb(name):
-    """
-    This routine is obsolete.
-    Returns a list of elements that call given kb
-
-    [ {'filename':"filename_1.py"
-       'name': "a name"
-      },
-      ...
-    ]
-
-    Returns elements sorted by name
-    """
-
-    format_elements = {}
-    #Retrieve all elements in files
-    files = os.listdir(CFG_BIBFORMAT_ELEMENTS_PATH)
-    for filename in files:
-        if filename.endswith(".py"):
-            path = CFG_BIBFORMAT_ELEMENTS_PATH + os.sep + filename
-            formatf = open(path, 'r')
-            code = formatf.read()
-            formatf.close()
-            # Search for use of kb inside code
-            kb_pattern = re.compile('''
-            (bfo.kb)\s*                #Function call
-            \(\s*                      #Opening parenthesis
-            [\'"]+                     #Single or double quote
-            (?P<kb>%s)                 #kb
-            [\'"]+\s*                  #Single or double quote
-            ,                          #comma
-            ''' % name, re.VERBOSE | re.MULTILINE | re.IGNORECASE)
-
-            result = kb_pattern.search(code)
-            if result is not None:
-                name = ("".join(filename.split(".")[:-1])).lower()
-                if name.startswith("bfe_"):
-                    name = name[4:]
-                format_elements[name] = {'filename':filename, 'name': name}
-
-    keys = format_elements.keys()
-    keys.sort()
-    return map(format_elements.get, keys)
-
 ###kb functions for export
 
 def get_kbs_info(kbtype="", searchkbname=""):

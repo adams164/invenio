@@ -609,61 +609,6 @@ sortby=%(sortby)s&amp;forcetype=no&amp;kb_type=%(kb_type)s"
 
         return out
 
-    def tmpl_admin_kb_show_dependencies(self, ln, kb_id, kb_name, sortby, format_elements):
-        """
-        Returns the attributes of a knowledge base.
-
-        @param ln: language
-        @param kb_id: the id of the kb
-        @param kb_name: the name of the kb
-        @param sortby: the sorting criteria ('from' or 'to')
-        @param format_elements: the elements that use this kb
-        """
-
-        _ = gettext_set_language(ln)    # load the right message language
-
-        out = '''
-        <table class="admin_wvar" cellspacing="0">
-        <tr><th colspan="4" class="adminheaderleft">%(menu)s</th></tr>
-        <tr>
-        <td>0.&nbsp;<small><a href="kb?ln=%(ln)s&amp;sortby=%(sortby)s">%(close)s</a></small>&nbsp;</td>
-        <td>1.&nbsp;<small><a href="kb?ln=%(ln)s&amp;kb=%(kb_id)s&amp;sortby=%(sortby)s">%(mappings)s</a></small>&nbsp;</td>
-        <td>2.&nbsp;<small><a href="kb?ln=%(ln)s&amp;action=attributes&amp;kb=%(kb_id)s&amp;sortby=%(sortby)s">%(attributes)s</a></small>&nbsp;</td>
-        </tr>
-        </table> <br/>''' % {'ln':ln,
-                             'kb_id':kb_id,
-                             'sortby':sortby,
-                             'close': _("Close Editor"),
-                             'menu' : _("Menu"),
-                             'mappings': _("Knowledge Base Mappings"),
-                             'attributes':_("Knowledge Base Attributes"),
-                             'dependencies':_("Knowledge Base Dependencies")}
-
-        out += ''' <table width="90%" class="admin_wvar" cellspacing="0"><tr>'''
-        out += '''
-        <th class="adminheaderleft">Format Elements used by %(name)s*</th>
-        </tr>
-        <tr>
-        <td valign="top">&nbsp;''' % {"name": kb_name}
-
-        if len(format_elements) == 0:
-            out += '<p align="center"><i>%s</i></p>' % \
-                   _("This knowledge base is not used in any format elements.")
-        for format_element in format_elements:
-            name = format_element['name']
-            out += '''<a href="format_elements_doc?ln=%(ln)s#%(anchor)s">%(name)s</a><br/>''' % {'name':"bfe_"+name.lower(),
-                                                                                                 'anchor':name.upper(),
-                                                                                                 'ln':ln}
-        out += '''
-        </td>
-        </tr>
-        </table>
-        <b>*Note</b>: Some knowledge base usages might not be shown. Check manually.
-        '''
-
-        return out
-
-
     def tmpl_select_rule_action(self, ln, kbid, left, right, leftorright, current, dicts):
         """
         Returns a form of actions for the user to decide what to do

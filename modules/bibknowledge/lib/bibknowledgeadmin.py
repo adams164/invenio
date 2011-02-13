@@ -299,52 +299,6 @@ def kb_dynamic_update(req, kb_id, field, expression, collection,
                                    text=auth_msg,
                                    navtrail=navtrail_previous_links)
 
-def kb_show_dependencies(req, kb, ln=CFG_SITE_LANG, sortby="to"):
-    """
-    Shows the dependencies of a given kb
-
-    @param kb the kb id to show
-    @param ln language
-    @param sortby the sorting criteria ('from' or 'to')
-    """
-    ln = wash_language(ln)
-    _ = gettext_set_language(ln)
-    navtrail_previous_links = ''' &gt; <a class="navtrail" href="%s/kb?ln=%s">%s</a>''' % (CFG_SITE_URL, ln, _("Manage Knowledge Bases"))
-
-    try:
-        uid = getUid(req)
-    except MySQLdb.Error:
-        return error_page(req)
-
-    (auth_code, auth_msg) = check_user(req, 'cfgbibknowledge')
-    if not auth_code:
-        kb_id = wash_url_argument(kb, 'int')
-        kb_name = bibknowledge.get_kb_name(kb_id)
-
-        if kb_name is None:
-            return page(title=_("Unknown Knowledge Base"),
-                        body = "",
-                        language=ln,
-                        navtrail = navtrail_previous_links,
-                        errors = [("ERR_KB_ID_UNKNOWN", kb)],
-                        lastupdated=__lastupdated__,
-                        req=req)
-
-
-        return page(title=_("Knowledge Base %s Dependencies" % kb_name),
-                body=bibknowledgeadminlib.perform_request_knowledge_base_show_dependencies(ln=ln,
-                                          kb_id=kb_id,
-                                          sortby=sortby),
-                uid=uid,
-                language=ln,
-                navtrail = navtrail_previous_links,
-                lastupdated=__lastupdated__,
-                req=req)
-    else:
-        return page_not_authorized(req=req,
-                                   text=auth_msg,
-                                   navtrail=navtrail_previous_links)
-
 def kb_add_mapping(req, kb, mapFrom, mapTo, sortby="to", ln=CFG_SITE_LANG,
                    forcetype=None, replacements=None, kb_type=None):
     """
