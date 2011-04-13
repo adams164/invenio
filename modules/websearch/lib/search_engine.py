@@ -228,7 +228,10 @@ def ziplist(*lists):
        [[f1, p1, op1], [f2, p2, op2], [f3, p3, '']]
 
     FIXME: This is handy to have, and should live somewhere else, like
-    miscutil.really_useful_functions or something.
+           miscutil.really_useful_functions or something.
+    XXX: Starting in python 2.6, the same can be achieved (faster) by
+         using itertools.izip_longest(); when the minimum recommended Python
+         is bumped, we should use that instead.
     """
     def l(*items):
         return list(items)
@@ -2116,10 +2119,11 @@ def search_unit(p, f=None, m=None, wl=0):
     if CFG_SOLR_URL and f == 'fulltext':
         # redirect to Solr/Lucene
         return search_unit_in_solr(p, f, m)
-    if f == 'datecreated':
-        hitset = search_unit_in_bibrec(p, p, 'c')
-    elif f == 'datemodified':
-        hitset = search_unit_in_bibrec(p, p, 'm')
+    if ((f == 'datecreated') or (f == 'datemodified')):
+        ps = p.split('->')
+        if len(ps) < 2:
+            ps.append(ps[0])
+        hitset = search_unit_in_bibrec(ps[0], ps[1], f[4:])
     elif f == 'refersto':
         # we are doing search by the citation count
         hitset = search_unit_refersto(p)

@@ -268,10 +268,37 @@ class TestQueryParser(unittest.TestCase):
         self._check('author:  "Ellis, J"', None, None,
                     [['+', 'Ellis, J', 'author', 'a']])
 
+
+class TestMiscellaneousRegressionsSafely(unittest.TestCase):
+    """Test various actual and potential regressions isometrically"""
+
+    def setUp(self):
+        """Establish variables we plan to re-use"""
+        from invenio.intbitset import intbitset as HitSet
+        self.empty = HitSet()
+
+    def test_search_unit_hits_for_datecreated_previous_millenia(self):
+        """search_unit, datecreated returns >0 hits for docs in the last 1000 years"""
+        self.assertNotEqual(self.empty, search_engine.search_unit('1000-01-01->9999', 'datecreated'))
+
+    def test_search_unit_hits_for_datemodified_previous_millenia(self):
+        """search_unit, datemodified returns >0 hits for docs in the last 1000 years"""
+        self.assertNotEqual(self.empty, search_engine.search_unit('1000-01-01->9999', 'datemodified'))
+
+    def test_search_unit_in_bibrec_for_datecreated_previous_millenia(self):
+        """search_unit_in_bibrec, datecreated gets >0 hits for past 1000 years"""
+        self.assertNotEqual(self.empty, search_engine.search_unit_in_bibrec("1000-01-01", "9999-12-31", 'creationdate'))
+
+    def test_search_unit_in_bibrec_for_datecreated_next_millenia(self):
+        """search_unit_in_bibrec, datecreated gets 0 hits for after year 3000"""
+        self.assertEqual(self.empty, search_engine.search_unit_in_bibrec("3000-01-01", "9999-12-31", 'creationdate'))
+
+
 TEST_SUITE = make_test_suite(TestWashQueryParameters,
                              TestStripAccents,
                              TestQueryParser,
-                             TestMiscUtilityFunctions)
+                             TestMiscUtilityFunctions,
+                             TestMiscellaneousRegressionsSafely,)
 
 
 if __name__ == "__main__":
