@@ -605,6 +605,10 @@ class SpiresToInvenioSyntaxConverter:
         # but we have no invenio equivalents for these ATM
     ]
 
+    _INVENIO_KEYWORDS_LIST = set(_SPIRES_TO_INVENIO_KEYWORDS_MATCHINGS.values()) |\
+                             set(_SECOND_ORDER_KEYWORD_MATCHINGS.values())
+    _INVENIO_KEYWORDS_LIST.remove('')
+
     def __init__(self):
         """Initialize the state of the converter"""
         self._months = {}
@@ -1032,11 +1036,7 @@ class SpiresToInvenioSyntaxConverter:
         """Replaces invenio keywords kw with "and kw" in order to
            parse them correctly further down the line."""
 
-        unique_invenio_keywords = set(self._SPIRES_TO_INVENIO_KEYWORDS_MATCHINGS.values()) |\
-                                  set(self._SECOND_ORDER_KEYWORD_MATCHINGS.values())
-        unique_invenio_keywords.remove('') # for the ones that don't have invenio equivalents
-
-        for invenio_keyword in unique_invenio_keywords:
+        for invenio_keyword in _INVENIO_KEYWORDS_LIST:
             query = re.sub("(?<!... \+|... -| and |. or | not |....:)"+invenio_keyword, "and "+invenio_keyword, query)
             query = re.sub("\+"+invenio_keyword, "and "+invenio_keyword, query)
             query = re.sub("-"+invenio_keyword, "and not "+invenio_keyword, query)
