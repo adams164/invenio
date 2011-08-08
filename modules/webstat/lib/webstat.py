@@ -79,7 +79,8 @@ from invenio.webstat_engine import get_keyevent_trend_collection_population, \
     get_invenio_error_log_ranking, \
     get_invenio_last_n_errors, \
     update_error_log_analyzer, \
-    get_apache_error_log_ranking
+    get_apache_error_log_ranking,\
+    get_session_data
 
 # Imports handling custom events
 from invenio.webstat_engine import get_customevent_table, \
@@ -829,7 +830,21 @@ def loan_display():
         return res
     except IndexError:
         return []
-
+    
+def session_display(args):
+    res=[]
+    session_data=get_session_data(args)
+    print session_data
+    num_sessions,num_single_sessions,frustration_counts=session_data
+    frustration_cut_1,frustration_cut_2,sessions_cut_1,sessions_cut_2,higher_count=frustration_counts
+    res.append(("Sessions",num_sessions))
+    res.append(("   Single Search Sessions",num_single_sessions))
+    res.append(("   Multi Search Sessions",num_sessions-num_single_sessions))
+    res.append(("   Frustrated Sessions",frustration_cut_1))
+    res.append(("   Potentially Frustrated",sessions_cut_1))
+    res.append(("   Highly Frustrated Sessions",frustration_cut_2))
+    res.append(("   Potentially Highly Frustrated",sessions_cut_2))
+    return res
 
 def get_url_customevent(url_dest, event_id, *arguments):
     """
@@ -944,6 +959,13 @@ def perform_request_index(ln=CFG_SITE_LANG):
     if conf.get("general", "uptime_box") == "True":
         health_indicators.append(("Uptime cmd",
                                   get_keyevent_snapshot_uptime_cmd()))
+    
+    # Append session statistics
+
+    health_indicators.append(None)
+    args = {'t_start': yesterday,'t_end': today,
+            't_format': "%Y-%m-%d"}
+    health_indicators += session_display(args)
 
     # Display the health box
     out += TEMPLATES.tmpl_system_health(health_indicators, ln=ln)
@@ -1335,7 +1357,7 @@ def perform_display_custom_summary(args, ln=CFG_SITE_LANG):
                                                 + args['query'] + args['tag'])
     create_custom_summary_graph(data[:-1], path, args['title'])
     return TEMPLATES.tmpl_display_custom_summary(tag_name, data, args['title'],
-                                    args['query'], args['tag'], path, ln=ln)
+                                    args['query'], args['tag'], path, ln=ln)        
 
 # INTERNALS
 

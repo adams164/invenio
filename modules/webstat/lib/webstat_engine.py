@@ -18,7 +18,7 @@
 __revision__ = "$Id$"
 __lastupdated__ = "$Date$"
 
-import calendar, commands, datetime, time, os, cPickle, random
+import calendar, commands, datetime, time, os, cPickle, random, re, urllib, Levenshtein
 try:
     import xlwt
     xlwt_imported = True
@@ -37,9 +37,11 @@ from invenio.bibcirculation_utils import book_title_from_MARC, \
     book_information_from_MARC
 from invenio.bibcirculation_dblayer import get_id_bibrec, \
     get_borrower_data
+from invenio.search_engine_query_parser import SpiresToInvenioSyntaxConverter
 
 WEBSTAT_SESSION_LENGTH = 48 * 60 * 60 # seconds
 WEBSTAT_GRAPH_TOKENS = '-=#+@$%&XOSKEHBC'
+SEARCH = re.compile('(p|p1|p2)=(?P<term>.*?)(&| |$)')
 
 # KEY EVENT TREND SECTION
 
@@ -2202,6 +2204,8 @@ def export_to_excel(data, req):
     book.save(filename)
     redirect_to_url(req, '%s/stats/export?filename=%s&mime=%s' \
                         % (CFG_SITE_URL, os.path.basename(filename), 'application/vnd.ms-excel'))
+
+
 # INTERNAL
 
 def _export(mime, content, req):
@@ -2419,3 +2423,178 @@ def _get_tag_name(tag):
     if res:
         return res[0][0]
     return ''
+
+def _get_query_log(t_start,t_end):
+    """
+    Returns the list of user search queries generated between t_start and t_end
+    """
+    sql_query="SELECT user_query.hostname, user_query.date, query.urlargs "+\
+              "FROM user_query "+\
+              "INNER JOIN query ON user_query.id_query = query.id "+\
+              "WHERE user_query.date > '%s' AND user_query.date < '%s'"%(t_start,t_end)+\
+              "ORDER BY date"
+    query_results = run_sql(sql_query)
+    if query_results:
+        return query_results
+    else:
+        return []
+
+def get_session_data(args):
+    """
+    Returns the session data for a given time span
+     
+    @param args['t_start']: Date and time of start point
+    @type args['t_start']: str
+
+    @param args['t_end']: Date and time of end point
+    @type args['t_end']: str
+
+    @param args['t_format']: Date and time formatting string
+    @type args['t_format']: str
+    """
+    lower = _to_datetime(args['t_start'], args['t_format']).isoformat()
+    upper = _to_datetime(args['t_end'], args['t_format']).isoformat()
+
+    log_data = _get_query_log(lower,upper)
+
+    ip_listpair=[]
+    ip_active={}
+    timeout=5
+    session_timeout=datetime.timedelta(minutes=timeout)
+    if log_data:
+        for query in log_data:
+            print query
+            if SEARCH.search(query[2]):
+                ip=query[0]
+                date=query[1]
+                search_term = urllib.unquote(SEARCH.search(query[2]).group('term').lower().replace('+', ' '))
+                referrer=''
+                
+                if ip in ip_active:
+                    time_dif = abs(date-ip_active[ip][1])
+                    if time_dif > session_timeout:
+                        ip_listpair.append((ip,ip_active[ip][0],ip_active[ip][1],ip_active[ip][2],ip_active[ip][3],ip_active[ip][4]))
+                        ip_active[ip]=[1,date,date,referrer,[(search_term,date)]]
+                    else:
+                        ip_active[ip][0]+=1
+                        ip_active[ip][1]=date
+                        ip_active[ip][4].append((search_term,date))
+                else:
+                    ip_active[ip]=[1,date,date,referrer,[(search_term,date)]]
+    for ip in ip_active:
+        ip_listpair.append((ip,ip_active[ip][0],ip_active[ip][1],ip_active[ip][2],ip_active[ip][3],ip_active[ip][4]))
+    return processSessionData(ip_listpair)
+
+
+def processSessionData(ip_listpair):
+    num_sessions=0
+    num_single_sessions=0
+    frustration_cut_1=0
+    frustration_cut_2=0
+    sessions_cut_1=0
+    sessions_cut_2=0
+    higher_count=0
+    #discriminator=10
+    
+    
+    for session in ip_listpair:
+        num_sessions+=1
+        if session[1]==1:
+            num_single_sessions+=1
+        #if delta.seconds>0:
+            #session_metric.append(session[1]/(delta.seconds/float(60)))
+        re_searches=0
+        last_search=''
+        for search in session[5]:
+            term = search[0]
+            if similarQueries(last_search,term):
+                re_searches+=1
+            last_search=term
+        if session[1]<250 and session[1]>2:
+            if session[1]>5 and ((float(re_searches)/float(session[1])>.5 and re_searches>5) or re_searches>=10):
+                if re_searches>=10:
+                    frustration_cut_2+=1
+                elif re_searches>5:
+                    frustration_cut_1+=1
+                #frustration_info = (session[0],re_searches,session[5])
+                #print "IP --- "+session[0]+" --- "+str(re_searches)
+                #for search in session[5]:
+                #    print str(search[0])
+                #session_metric.append(frustration_info)
+            if session[1]>=20:
+                sessions_cut_2+=1
+            elif session[1]>10:
+                sessions_cut_1+=1
+            
+        elif session[1]>250:
+            higher_count+=1
+            
+    frustration_counts=(frustration_cut_1,frustration_cut_2,sessions_cut_1,sessions_cut_2,higher_count)
+    packaged_session_data=(num_sessions,num_single_sessions,frustration_counts)
+    return packaged_session_data
+
+def getKeywordValues(search_term):
+    StI=SpiresToInvenioSyntaxConverter._SPIRES_TO_INVENIO_KEYWORDS_MATCHINGS
+    keywords_found=[]
+    index=0
+    full_terms=search_term.split(" ")
+    while index<len(full_terms):
+        term=full_terms[index]
+        if term!="find":
+            if term in StI:
+                cur_pos=1
+                value_term=[]
+                while cur_pos+index<len(full_terms):
+                    cur_term = full_terms[cur_pos+index]
+                    if not cur_term in ['and','or','not']:
+                        value_term.append(cur_term)
+                    else:
+                        break
+                    cur_pos+=1
+                index+=cur_pos-1
+                keywords_found.append((StI[term]," ".join(value_term)))
+            elif ":" in term:
+                keywords_found.append((term.split(":")[0]+":",term.split(":")[1]))
+            else:
+                keywords_found.append(('',term))
+        index+=1
+    return keywords_found
+
+def digitPercent(string):
+    num=0
+    for char in string:
+        if char.isdigit():
+            num+=1
+    if len(string)>0:
+        return float(num)/float(len(string))
+    else:
+        return 0
+
+def compareTermDict(term1, term2):
+    DIGIT=re.compile('[0-9]')
+    if len(term1)==len(term2):
+        final_return=False
+        for kv1,kv2 in zip(term1,term2):
+            if Levenshtein.ratio(kv1[1],kv2[1])<.6:
+                final_return=False
+            else:
+                value1=DIGIT.sub('',kv1[1])
+                value2=DIGIT.sub('',kv2[1])
+                if kv1[0]==kv2[0] and value1==value2:
+                    continue
+                final_return=True
+        return final_return
+    else:
+        return False
+
+def similarQueries(query1, query2):
+    if query1 and query2:
+        if query1!=query2 and not("recid:" in query1 or "recid:" in query2):
+            if compareTermDict(getKeywordValues(query1),getKeywordValues(query2)):
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
