@@ -832,6 +832,9 @@ def loan_display():
         return []
     
 def session_display(args):
+    """
+    Display session statistics
+    """
     res=[]
     session_data=get_session_data(args)
     print session_data

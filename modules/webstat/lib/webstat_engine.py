@@ -18,7 +18,12 @@
 __revision__ = "$Id$"
 __lastupdated__ = "$Date$"
 
-import calendar, commands, datetime, time, os, cPickle, random, re, urllib, Levenshtein
+import calendar, commands, datetime, time, os, cPickle, random, re, urllib
+try:
+    import Levenshtein
+    levenshtein_imported=True
+except ImportError:
+    levenshtein_imported=False
 try:
     import xlwt
     xlwt_imported = True
@@ -2441,7 +2446,7 @@ def _get_query_log(t_start,t_end):
 
 def get_session_data(args):
     """
-    Returns the session data for a given time span
+    Returns the session and frustration data for a given time span
      
     @param args['t_start']: Date and time of start point
     @type args['t_start']: str
@@ -2487,6 +2492,9 @@ def get_session_data(args):
 
 
 def processSessionData(ip_listpair):
+    """
+    Run frustration detection on the session data
+    """
     num_sessions=0
     num_single_sessions=0
     frustration_cut_1=0
@@ -2503,13 +2511,7 @@ def processSessionData(ip_listpair):
             num_single_sessions+=1
         #if delta.seconds>0:
             #session_metric.append(session[1]/(delta.seconds/float(60)))
-        re_searches=0
-        last_search=''
-        for search in session[5]:
-            term = search[0]
-            if similarQueries(last_search,term):
-                re_searches+=1
-            last_search=term
+        re_searches=checkSessionFrustrated(session)
         if session[1]<250 and session[1]>2:
             if session[1]>5 and ((float(re_searches)/float(session[1])>.5 and re_searches>5) or re_searches>=10):
                 if re_searches>=10:
@@ -2533,7 +2535,23 @@ def processSessionData(ip_listpair):
     packaged_session_data=(num_sessions,num_single_sessions,frustration_counts)
     return packaged_session_data
 
+def checkSessionFrustrated(session):
+    """
+    Test a session for the amount of frustration
+    """
+    re_searches=0
+    last_search=''
+    for search in session[5]:
+        term = search[0]
+        if similarQueries(last_search,term):
+            re_searches+=1
+        last_search=term
+    return re_searches
+
 def getKeywordValues(search_term):
+    """
+    Utility function to capture keyword/value pairs in a search term
+    """
     StI=SpiresToInvenioSyntaxConverter._SPIRES_TO_INVENIO_KEYWORDS_MATCHINGS
     keywords_found=[]
     index=0
@@ -2560,34 +2578,33 @@ def getKeywordValues(search_term):
         index+=1
     return keywords_found
 
-def digitPercent(string):
-    num=0
-    for char in string:
-        if char.isdigit():
-            num+=1
-    if len(string)>0:
-        return float(num)/float(len(string))
-    else:
-        return 0
-
 def compareTermDict(term1, term2):
-    DIGIT=re.compile('[0-9]')
-    if len(term1)==len(term2):
-        final_return=False
-        for kv1,kv2 in zip(term1,term2):
-            if Levenshtein.ratio(kv1[1],kv2[1])<.6:
-                final_return=False
-            else:
-                value1=DIGIT.sub('',kv1[1])
-                value2=DIGIT.sub('',kv2[1])
-                if kv1[0]==kv2[0] and value1==value2:
-                    continue
-                final_return=True
-        return final_return
+    """
+    Compare two keyword/value dictionaries
+    """
+    if levenshtein_imported:
+        DIGIT=re.compile('[0-9]')
+        if len(term1)==len(term2):
+            final_return=False
+            for kv1,kv2 in zip(term1,term2):
+                if Levenshtein.ratio(kv1[1],kv2[1])<.6:
+                    final_return=False
+                else:
+                    value1=DIGIT.sub('',kv1[1])
+                    value2=DIGIT.sub('',kv2[1])
+                    if kv1[0]==kv2[0] and value1==value2:
+                        continue
+                    final_return=True
+            return final_return
+        else:
+            return False
     else:
-        return False
+        return
 
 def similarQueries(query1, query2):
+    """
+    Compare the similarity of two non-identical queries
+    """
     if query1 and query2:
         if query1!=query2 and not("recid:" in query1 or "recid:" in query2):
             if compareTermDict(getKeywordValues(query1),getKeywordValues(query2)):
